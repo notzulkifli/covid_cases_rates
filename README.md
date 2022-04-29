@@ -1,1 +1,1 @@
-# covid_cases_rates
+# thematic_covid_2020_cases_rates
