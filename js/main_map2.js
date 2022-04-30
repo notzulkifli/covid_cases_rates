@@ -13,7 +13,6 @@ const grades = [30000, 50000, 100000],
     radii = [5, 15, 20];
 
 //load data to the map as new layers.
-//map.on('load', function loadingData() {
 map.on('load', () => { //simplifying the function statement: arrow with brackets to define a function
 
     // when loading a geojson, there are two steps
@@ -24,21 +23,24 @@ map.on('load', () => { //simplifying the function statement: arrow with brackets
     });
 
     map.addLayer({
-            'id': 'us-covid-2020-counts-points',
+            'id': 'us-covid-2020-counts-layer',
             'type': 'circle',
             'source': 'us-covid-2020-counts',
+            'minzoom': 4.35,
             'paint': {
-                // increase the radii of the circle as the zoom level and dbh value increases
                 'circle-radius': {
                     'property': 'cases',
                     'stops': [
                         [{
+                            zoom: 5,
                             value: grades[0]
                         }, radii[0]],
                         [{
+                            zoom: 5,
                             value: grades[1]
                         }, radii[1]],
                         [{
+                            zoom: 5,
                             value: grades[2]
                         }, radii[2]]
                     ]
@@ -60,14 +62,13 @@ map.on('load', () => { //simplifying the function statement: arrow with brackets
     );
 
 
-    // click on tree to view Cases in a popup
-    map.on('click', 'us-covid-2020-counts-point', (event) => {
+    // click on tree to view cases in a popup
+    map.on('click', 'us-covid-2020-counts-layer', (event) => {
         new mapboxgl.Popup()
             .setLngLat(event.features[0].geometry.coordinates)
-            .setHTML(`<strong>Cases:</strong> ${event.features[0].properties.cases}`)
+            .setHTML(`<strong>State:</strong> ${event.features[0].properties.state} <br><strong>County:</strong> ${event.features[0].properties.county}</br> <strong>Cases:</strong> ${event.features[0].properties.cases}</br> <strong>Deaths:</strong> ${event.features[0].properties.deaths}`)
             .addTo(map);
     });
-
 });
 
 
@@ -90,7 +91,12 @@ for (var i = 0; i < grades.length; i++) {
         '</span></p>');
 
 }
-const source =
-    '<p style="text-align: right; font-size:10pt">Source: <a href="https://earthquake.usgs.gov/earthquakes/">USGS</a></p>';
+// add the data source
+const description = '<p style="text-align: right; font-size:10pt">Areas with cases below 30,000, equal 30,000, but less then 50,000 will be small purple circles. Areas greater than 50,000, but less then 100,000 will have medium blue bubbles. Areas with cases greater than 100,000 will have big green bubble. </p>'
 
-legend.innerHTML = labels.join('') + source;
+const source =
+    '<p style="text-align: right; font-size:10pt">Source: <a href="https://github.com/nytimes/covid-19-data/blob/43d32dde2f87bd4dafbb7d23f5d9e878124018b8/live/us-counties.csv">New York Times</a></p>';
+
+const users = '<p style="text-align: right; font-size:10pt">Users: Analysts, Trend-seekers, news-outlets, etc. </p>'
+// combine all the html codes.
+legend.innerHTML = labels.join('') + description + source + users;
